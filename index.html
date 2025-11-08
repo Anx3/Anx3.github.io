@@ -166,6 +166,119 @@
     
     
     
+
+    <style>
+        #nbu-user-avatar {
+            width: 31px !important;
+            height: 31px !important;
+            object-fit: cover !important;
+            border-radius: 50% !important;
+            border: 2px solid #3498DB !important;
+        }
+        .nbu-logout-btn {
+            padding: 7px 14px;
+            border: 1px solid #BEBEC6 !important;
+        }
+        .nbu-logout-btn:hover {
+            background: #3498DB;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        .nbu-login-btn {
+            border: 1px solid #BEBEC6 !important;
+        }
+        .nbu-login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        /* 欢迎弹窗样式 */
+        .nbu-welcome-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg, #fff);
+            border: 1px solid var(--border-color, #e1e5e9);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            z-index: 10000;
+            animation: nbuToastSlideIn 0.3s ease-out;
+            max-width: 320px;
+        }
+
+        .nbu-toast-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .nbu-toast-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .nbu-toast-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nbu-toast-text strong {
+            color: var(--text-color, #333);
+            font-size: 0.95rem;
+        }
+
+        .nbu-toast-text span {
+            color: var(--text-muted, #666);
+            font-size: 0.85rem;
+        }
+
+        .nbu-toast-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-muted, #999);
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .nbu-toast-close:hover {
+            background: var(--bg-muted, #f5f5f5);
+            color: var(--text-color, #333);
+        }
+
+        @keyframes nbuToastSlideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nbu-welcome-toast {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+    </style>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <meta name="generator" content="Hexo 8.1.0"></head>
 
 
@@ -330,11 +443,50 @@
     <div class="navbar-content transition-navbar has-home-banner">
         <div class="left">
             
-            <a class="logo-title" href="/">
-                <h1>
-                NBU Research center
-                </h1>
-            </a>
+            <!-- NBU认证组件 -->
+<div class="nbu-auth-widget">
+    <!-- 未登录状态 -->
+    <div id="nbu-login-section" style="display: none;">
+        <button onclick="nbuHandleLogin()" class="nbu-login-btn">
+            🔐 NBURC账户登录
+        </button>
+    </div>
+    
+    <!-- 已登录状态 -->
+    <div id="nbu-user-section" style="display: none;">
+        <div class="nbu-user-info">
+            <img id="nbu-user-avatar" class="nbu-avatar" src="" alt="头像">
+            <span id="nbu-user-name" class="nbu-username"></span>
+            <button onclick="nbuHandleLogout()" class="nbu-logout-btn">退出</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.nbu-auth-widget {
+    margin: 1rem 0;
+}
+.nbu-login-btn, .nbu-logout-btn {
+    background: var(--btn-bg);
+    color: var(--btn-color);
+    border: 1px solid var(--btn-border-color);
+    padding: 7px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.nbu-user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.nbu-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+</style>
         </div>
 
         <div class="right">
@@ -762,6 +914,18 @@
 
 
 
+
+<script>
+    // 确保Auth0库已加载后再执行
+    if (typeof auth0 !== 'undefined') {
+        // 动态创建脚本元素加载认证逻辑
+        var script = document.createElement('script');
+        script.src = '/js/nburc-auth.js';
+        document.head.appendChild(script);
+    } else {
+        console.warn('Auth0库未加载，跳过认证逻辑初始化');
+    }
+</script>
 	
 </body>
 
