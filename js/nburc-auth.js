@@ -42,7 +42,7 @@ async function initializeNBUAuth() {
             domain: "dev-qajzo556g32cbm5b.us.auth0.com",
             clientId: "MCa52JMm0fAX4uAxRMOW636zkNU1wYN3",
             authorizationParams: {
-                redirect_uri: "http://localhost:4000/"
+                redirect_uri: "https://nburc.dpdns.org/"
             },
             cacheLocation: 'localstorage' // 明确指定使用localStorage持久化
         });
@@ -158,6 +158,8 @@ async function updateAuthUI() {
             // 用户未登录
             loginSection.style.display = 'block';
             userSection.style.display = 'none';
+            document.getElementById('nbu-login-section').style.display = 'block';
+            document.getElementById('nbu-user-section').style.display = 'none';
             console.log("🔓 显示登录按钮");
         }
         
@@ -303,7 +305,7 @@ async function nbuHandleLogin() {
     try {
         await nbuAuthClient.loginWithRedirect({
             authorizationParams: {
-                redirect_uri: "http://localhost:4000/" // 确保这里是你研究中心的实际域名
+                redirect_uri: "https://nburc.dpdns.org/" // 确保这里是你研究中心的实际域名
             }
         });
     } catch (error) {
@@ -326,7 +328,7 @@ async function nbuHandleLogout() {
     console.log("🚪 执行登出...");
     await nbuAuthClient.logout({
         logoutParams: {
-            returnTo: "http://localhost:4000/"
+            returnTo: "https://nburc.dpdns.org/"
         }
     });
 }
@@ -409,7 +411,7 @@ async function initializeNBUAuth() {
             domain: "dev-qajzo556g32cbm5b.us.auth0.com",
             clientId: "MCa52JMm0fAX4uAxRMOW636zkNU1wYN3",
             authorizationParams: {
-                redirect_uri: "http://localhost:4000/"
+                redirect_uri: "https://nburc.dpdns.org/"
             },
             cacheLocation: 'localstorage'
         });
