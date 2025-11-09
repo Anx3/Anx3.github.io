@@ -312,7 +312,7 @@ async function nbuHandleLogout() {
     console.log("🚪 执行登出...");
     await nbuAuthClient.logout({
         logoutParams: {
-            returnTo: "http://localhost:4000/"
+            returnTo: "https://nburc.dpdns.org/"
         }
     });
 }
@@ -324,3 +324,120 @@ if (initializeSupabase()) {
     initializeNBUAuth();
     updateAuthUI();
 }
+
+// 论文提交功能
+async function submitResearchPaper(paperData) {
+    console.log("📝 开始提交论文:", paperData);
+    
+    if (!supabaseClient || !currentUserProfile) {
+        alert('请先登录后再提交论文');
+        return null;
+    }
+    
+    try {
+        const { data, error } = await supabaseClient
+            .from('research_papers')
+            .insert([{
+                title: paperData.title,
+                abstract: paperData.abstract,
+                content: paperData.content,
+                author_id: currentUserProfile.auth0_user_id,
+                status: 'under_review',
+                topics: paperData.topics || [],
+                created_at: new Date().toISOString()
+            }])
+            .select()
+            .single();
+            
+        if (error) throw error;
+        
+        console.log("✅ 论文提交成功:", data);
+        
+        // 显示成功消息
+        showSubmissionToast('success', '论文提交成功！等待审核。');
+        return data;
+        
+    } catch (error) {
+        console.error("❌ 论文提交失败:", error);
+        showSubmissionToast('error', `提交失败: ${error.message}`);
+        return null;
+    }
+}
+
+// 获取用户自己的论文
+async function getUserPapers() {
+    if (!supabaseClient || !currentUserProfile) {
+        console.log("⚠️ 用户未登录，无法获取论文");
+        return [];
+    }
+    
+    try {
+        const { data, error } = await supabaseClient
+            .from('research_papers')
+            .select('*')
+            .eq('author_id', currentUserProfile.auth0_user_id)
+            .order('created_at', { ascending: false });
+            
+        if (error) throw error;
+        return data || [];
+        
+    } catch (error) {
+        console.error("❌ 获取用户论文失败:", error);
+        return [];
+    }
+}
+
+// 获取所有已发布的论文
+async function getPublishedPapers() {
+    if (!supabaseClient) {
+        return [];
+    }
+    
+    try {
+        const { data, error } = await supabaseClient
+            .from('research_papers')
+            .select(`
+                *,
+                user_profiles (
+                    display_name,
+                    oc_name,
+                    avatar_url
+                )
+            `)
+            .eq('status', 'published')
+            .order('created_at', { ascending: false });
+            
+        if (error) throw error;
+        return data || [];
+        
+    } catch (error) {
+        console.error("❌ 获取已发布论文失败:", error);
+        return [];
+    }
+}
+
+// 显示提交状态提示
+function showSubmissionToast(type, message) {
+    const toast = document.createElement('div');
+    toast.className = `nbu-submission-toast nbu-toast-${type}`;
+    toast.innerHTML = `
+        <div class="nbu-toast-content">
+            <span class="nbu-toast-icon">${type === 'success' ? '✅' : '❌'}</span>
+            <span class="nbu-toast-message">${message}</span>
+            <button class="nbu-toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.remove();
+        }
+    }, 5000);
+}
+
+// 使函数全局可用
+window.submitResearchPaper = submitResearchPaper;
+window.getUserPapers = getUserPapers;
+window.getPublishedPapers = getPublishedPapers;

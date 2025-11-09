@@ -278,9 +278,115 @@
                 max-width: none;
             }
         }
+
+        /* 论文提交表单样式 */
+        .nbu-paper-form {
+            background: var(--card-bg, #fff);
+            border: 1px solid var(--border-color, #e1e5e9);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .nbu-form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .nbu-form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color, #333);
+        }
+
+        .nbu-form-input,
+        .nbu-form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color, #e1e5e9);
+            border-radius: 6px;
+            font-size: 1rem;
+            background: var(--bg-color, #fff);
+            color: var(--text-color, #333);
+        }
+
+        .nbu-form-textarea {
+            min-height: 200px;
+            resize: vertical;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .nbu-form-input:focus,
+        .nbu-form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color, #007acc);
+            box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.1);
+        }
+
+        .nbu-topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .nbu-topic-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .nbu-submit-btn {
+            background: var(--primary-color, #007acc);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .nbu-submit-btn:hover {
+            background: var(--primary-dark, #005a9e);
+        }
+
+        .nbu-submit-btn:disabled {
+            background: var(--text-muted, #999);
+            cursor: not-allowed;
+        }
+
+        /* 提交状态提示 */
+        .nbu-submission-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg, #fff);
+            border: 1px solid var(--border-color, #e1e5e9);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10001;
+            animation: nbuToastSlideIn 0.3s ease-out;
+        }
+
+        .nbu-toast-success {
+            border-left: 4px solid #10b981;
+        }
+
+        .nbu-toast-error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .nbu-toast-message {
+            margin: 0 0.5rem;
+        }
     </style>
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/nburc-auth.js" defer></script>
 <meta name="generator" content="Hexo 8.1.0"></head>
 
 
@@ -570,7 +676,7 @@
       function loadWaline() {
         init({
           el: '#waline',
-          serverURL: 'https://example.example.com',
+          serverURL: 'https://nburc-iq9yquz11-anx3s-projects.vercel.app/',
           dark: 'body[class~="dark-mode"]',
           reaction: false,
           requiredMeta: ['nick', 'mail'],

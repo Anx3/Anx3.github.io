@@ -77,7 +77,7 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="http://example.com/archives/2025/"/>
+    <link rel="canonical" href="http://example.com/research/submit/"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
@@ -87,12 +87,14 @@
         
         <meta name="description" content="NBU Research center, Veritas et Awesome">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/archives/2025/index.html">
+<meta property="og:title" content="提交论文">
+<meta property="og:url" content="http://example.com/research/submit/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="NBU Research center, Veritas et Awesome">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/redefine-og.webp">
+<meta property="article:published_time" content="2025-11-08T23:13:57.876Z">
+<meta property="article:modified_time" content="2025-11-08T23:13:57.876Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/redefine-og.webp">
@@ -107,7 +109,7 @@
     
     <title>
         
-            Archive: 2025 | NBU Research center
+            提交论文 | NBU Research center
         
     </title>
 
@@ -548,34 +550,138 @@
 			
 
 			<div class="main-content">
-				<div class="archive-container shadow-none hover:shadow-none sm:shadow-redefine sm:hover:shadow-redefine-hover">
+				<div class="page-template-container">
 	
-<div class="archive-list-container">
+
+	
+
+	<div class="page-template-content markdown-body">
+		
+		<h1>提交论文</h1>
+		
+
+		<div class="nbu-paper-form">
+    <h2>📝 提交研究论文</h2>
+    <p>请填写以下信息提交您的研究论文。提交后论文将进入审核流程。</p>
     
-        <section class="archive-item mb-spacing-unit last:mb-0">
-            <div class="archive-item-header flex flex-row items-center mb-2">
-                <span class="archive-year font-semibold text-3xl mr-2">2025</span>
-                <span class="archive-year-post-count text-xs md:text-sm font-bold rounded-small bg-third-background-color py-[2px] px-[10px] border border-border-color">1</span>
-            </div>
-            
-            <ul class="article-list pl-0 md:pl-8 text-lg leading-[1.5]">
-                
-                    
-                    
-                         <!-- Close the previous LI if not the first item -->
-                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='10-29'>
-                    
-                    <a href="/2025/10/29/about/" class="block w-fit">
-                        <span class="article-title my-0.5 text-2xl">About NBURC</span>
-                    </a>
-                    
-                
-                </li> <!-- Ensure the last item is properly closed -->
-            </ul>
-        </section>
+<pre><code>&lt;form id=&quot;paper-submission-form&quot;&gt;
+    &lt;div class=&quot;nbu-form-group&quot;&gt;
+        &lt;label class=&quot;nbu-form-label&quot; for=&quot;paper-title&quot;&gt;论文标题 *&lt;/label&gt;
+        &lt;input type=&quot;text&quot; id=&quot;paper-title&quot; class=&quot;nbu-form-input&quot; required 
+               placeholder=&quot;请输入论文标题&quot;&gt;
+    &lt;/div&gt;
     
+    &lt;div class=&quot;nbu-form-group&quot;&gt;
+        &lt;label class=&quot;nbu-form-label&quot; for=&quot;paper-abstract&quot;&gt;摘要 *&lt;/label&gt;
+        &lt;textarea id=&quot;paper-abstract&quot; class=&quot;nbu-form-textarea&quot; required 
+                  placeholder=&quot;请简要描述您的研究内容和主要发现...&quot; rows=&quot;4&quot;&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+    
+    &lt;div class=&quot;nbu-form-group&quot;&gt;
+        &lt;label class=&quot;nbu-form-label&quot;&gt;研究主题&lt;/label&gt;
+        &lt;div class=&quot;nbu-topics-grid&quot; id=&quot;topics-container&quot;&gt;
+            <!-- 主题选项将通过JavaScript动态生成 -->
+        &lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;div class=&quot;nbu-form-group&quot;&gt;
+        &lt;label class=&quot;nbu-form-label&quot; for=&quot;paper-content&quot;&gt;论文正文 *&lt;/label&gt;
+        &lt;textarea id=&quot;paper-content&quot; class=&quot;nbu-form-textarea&quot; required 
+                  placeholder=&quot;请使用Markdown格式书写您的论文正文...&quot; rows=&quot;15&quot;&gt;&lt;/textarea&gt;
+        &lt;small style=&quot;color: var(--text-muted);&quot;&gt;支持Markdown格式，可以使用**粗体**、*斜体*、[链接]()等语法&lt;/small&gt;
+    &lt;/div&gt;
+    
+    &lt;button type=&quot;submit&quot; class=&quot;nbu-submit-btn&quot; id=&quot;submit-btn&quot;&gt;
+        提交论文
+    &lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
 </div>
+
+<script>
+// 研究主题选项
+const researchTopics = [
+    '魔法科学', '异世界考古', '超自然生物', '时空理论',
+    '炼金术', '符文研究', '元素魔法', '神秘学',
+    '历史考证', '文化研究', '语言学', '社会学'
+];
+
+// 初始化主题选择
+function initializeTopics() {
+    const container = document.getElementById('topics-container');
+    researchTopics.forEach(topic => {
+        const label = document.createElement('label');
+        label.className = 'nbu-topic-checkbox';
+        label.innerHTML = `
+            <input type="checkbox" name="topics" value="${topic}">
+            <span>${topic}</span>
+        `;
+        container.appendChild(label);
+    });
+}
+
+// 处理表单提交
+document.getElementById('paper-submission-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    const submitBtn = document.getElementById('submit-btn');
+    const originalText = submitBtn.textContent;
+    
+    // 禁用提交按钮防止重复提交
+    submitBtn.disabled = true;
+    submitBtn.textContent = '提交中...';
+    
+    try {
+        // 收集选中的主题
+        const selectedTopics = Array.from(document.querySelectorAll('input[name="topics"]:checked'))
+            .map(checkbox => checkbox.value);
+        
+        const paperData = {
+            title: document.getElementById('paper-title').value.trim(),
+            abstract: document.getElementById('paper-abstract').value.trim(),
+            content: document.getElementById('paper-content').value.trim(),
+            topics: selectedTopics
+        };
+        
+        // 验证必填字段
+        if (!paperData.title || !paperData.abstract || !paperData.content) {
+            throw new Error('请填写所有必填字段');
+        }
+        
+        // 提交论文
+        const result = await submitResearchPaper(paperData);
+        
+        if (result) {
+            // 清空表单
+            document.getElementById('paper-submission-form').reset();
+            // 可以跳转到论文列表页面或显示成功信息
+        }
+        
+    } catch (error) {
+        console.error('提交失败:', error);
+    } finally {
+        // 恢复提交按钮
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+    }
+});
+
+// 页面加载时初始化
+document.addEventListener('DOMContentLoaded', function() {
+    initializeTopics();
+});
+</script>
+	</div>
+
+	<div class="page-template-comments">
+		
+	</div>
 </div>
+
+<div class="paginator">
+	
+</div>
+  
 			</div>
 
 			
