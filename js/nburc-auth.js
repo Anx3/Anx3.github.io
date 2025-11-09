@@ -301,7 +301,7 @@ async function nbuHandleLogin() {
     try {
         await nbuAuthClient.loginWithRedirect({
             authorizationParams: {
-                redirect_uri: "https://nburc.dpdns.org//" // 确保这里是你研究中心的实际域名
+                redirect_uri: "https://nburc.dpdns.org/" // 确保这里是你研究中心的实际域名
             }
         });
     } catch (error) {
@@ -429,13 +429,13 @@ async function initializeNBUAuth() {
 async function submitResearchPaper(paperData) {
     console.log("📝 开始提交论文:", paperData);
     
-    if (!supabaseClient || !currentUserProfile) {
+    if (!supabaseAdmin || !currentUserProfile) {
         alert('请先登录后再提交论文');
         return null;
     }
     
     try {
-        const { data, error } = await supabaseClient
+        const { data, error } = await supabaseAdmin
             .from('research_papers')
             .insert([{
                 title: paperData.title,
@@ -466,13 +466,13 @@ async function submitResearchPaper(paperData) {
 
 // 获取用户自己的论文
 async function getUserPapers() {
-    if (!supabaseClient || !currentUserProfile) {
+    if (!supabaseAdmin || !currentUserProfile) {
         console.log("⚠️ 用户未登录，无法获取论文");
         return [];
     }
     
     try {
-        const { data, error } = await supabaseClient
+        const { data, error } = await supabaseAdmin
             .from('research_papers')
             .select('*')
             .eq('author_id', currentUserProfile.auth0_user_id)
@@ -489,12 +489,12 @@ async function getUserPapers() {
 
 // 获取所有已发布的论文
 async function getPublishedPapers() {
-    if (!supabaseClient) {
+    if (!supabaseAdmin) {
         return [];
     }
     
     try {
-        const { data, error } = await supabaseClient
+        const { data, error } = await supabaseAdmin
             .from('research_papers')
             .select(`
                 *,
