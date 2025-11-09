@@ -42,7 +42,7 @@ async function initializeNBUAuth() {
             domain: "dev-qajzo556g32cbm5b.us.auth0.com",
             clientId: "MCa52JMm0fAX4uAxRMOW636zkNU1wYN3",
             authorizationParams: {
-                redirect_uri: "https://nburc.dpdns.org/"
+                redirect_uri: "http://localhost:4000/"
             },
             cacheLocation: 'localstorage' // 明确指定使用localStorage持久化
         });
@@ -55,6 +55,19 @@ async function initializeNBUAuth() {
     } catch (error) {
         console.error("💥 Auth0初始化失败:", error);
     }
+    startAuthComponentWatcher();
+}
+
+function startAuthComponentWatcher() {
+    setInterval(() => {
+        const loginSection = document.getElementById('nbu-login-section');
+        const userSection = document.getElementById('nbu-user-section');
+        
+        if (!loginSection || !userSection) {
+            console.log("🔍 定时检查: 认证组件丢失");
+            location.reload(); // 或者执行更精细的修复
+        }
+    }, 1000);
 }
 
 // 处理所有认证相关逻辑
@@ -129,12 +142,13 @@ async function updateAuthUI() {
             // 更新UI显示
             loginSection.style.display = 'none';
             userSection.style.display = 'block';
+            document.getElementById('nbu-login-section').style.display = 'none';
+            document.getElementById('nbu-user-section').style.display = 'block';
             
             // 显示用户信息（优先显示OC名，没有则显示邮箱）
             const displayName = userProfile?.oc_name || userProfile?.display_name || user.name || user.nickname || user.email || 'NBU用户';
             document.getElementById('nbu-user-name').textContent = displayName;
             document.getElementById('nbu-user-avatar').src = userProfile?.avatar_url || user.picture;
-            
             console.log("👤 显示用户信息:", displayName);
             
             // 🎉 显示欢迎弹窗
@@ -289,7 +303,7 @@ async function nbuHandleLogin() {
     try {
         await nbuAuthClient.loginWithRedirect({
             authorizationParams: {
-                redirect_uri: "https://nburc.dpdns.org/" // 确保这里是你研究中心的实际域名
+                redirect_uri: "http://localhost:4000/" // 确保这里是你研究中心的实际域名
             }
         });
     } catch (error) {
@@ -312,7 +326,7 @@ async function nbuHandleLogout() {
     console.log("🚪 执行登出...");
     await nbuAuthClient.logout({
         logoutParams: {
-            returnTo: "https://nburc.dpdns.org/"
+            returnTo: "http://localhost:4000/"
         }
     });
 }
@@ -395,7 +409,7 @@ async function initializeNBUAuth() {
             domain: "dev-qajzo556g32cbm5b.us.auth0.com",
             clientId: "MCa52JMm0fAX4uAxRMOW636zkNU1wYN3",
             authorizationParams: {
-                redirect_uri: "https://nburc.dpdns.org/"
+                redirect_uri: "http://localhost:4000/"
             },
             cacheLocation: 'localstorage'
         });
