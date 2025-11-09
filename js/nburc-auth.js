@@ -140,8 +140,6 @@ async function updateAuthUI() {
             currentUserProfile = userProfile;
             
             // 更新UI显示
-            loginSection.style.display = 'none';
-            userSection.style.display = 'block';
             document.getElementById('nbu-login-section').style.display = 'none';
             document.getElementById('nbu-user-section').style.display = 'block';
             
@@ -156,8 +154,6 @@ async function updateAuthUI() {
             
         } else {
             // 用户未登录
-            loginSection.style.display = 'block';
-            userSection.style.display = 'none';
             document.getElementById('nbu-login-section').style.display = 'block';
             document.getElementById('nbu-user-section').style.display = 'none';
             console.log("🔓 显示登录按钮");
@@ -305,7 +301,7 @@ async function nbuHandleLogin() {
     try {
         await nbuAuthClient.loginWithRedirect({
             authorizationParams: {
-                redirect_uri: "https://nburc.dpdns.org/" // 确保这里是你研究中心的实际域名
+                redirect_uri: "https://nburc.dpdns.org//" // 确保这里是你研究中心的实际域名
             }
         });
     } catch (error) {
