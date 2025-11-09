@@ -432,6 +432,48 @@
     </div>
 </div>
 
+<script>
+// 确保组件在DOM更新后重新渲染
+function ensureAuthComponentRender() {
+    const loginSection = document.getElementById('nbu-login-section');
+    const userSection = document.getElementById('nbu-user-section');
+    
+    // 如果组件元素不存在，重新创建
+    if (!loginSection || !userSection) {
+        console.log("🔄 认证组件丢失，重新创建");
+        renderAuthComponent();
+    } else {
+        // 组件存在，确保状态正确
+        updateAuthUI();
+    }
+}
+
+// 重新渲染认证组件
+function renderAuthComponent() {
+    const existingWidget = document.querySelector('.nbu-auth-widget');
+    if (existingWidget) {
+        existingWidget.remove();
+    }
+    
+    // 这里可以动态重新创建组件，或者简单地说：
+    console.log("⚠️ 认证组件需要手动重新加载");
+}
+
+// 页面加载后立即检查
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("📄 DOM加载完成，检查认证组件");
+    setTimeout(ensureAuthComponentRender, 100);
+});
+
+// 监听可能的动态内容加载
+if (typeof window.onContentChange !== 'undefined') {
+    window.onContentChange = function() {
+        console.log("📦 内容变化，更新认证组件");
+        setTimeout(ensureAuthComponentRender, 200);
+    };
+}
+</script>
+
 <style>
 .nbu-auth-widget {
     margin: 1rem 0;

@@ -103,7 +103,7 @@ async function updateAuthUI() {
         console.log("⚠️ 客户端未就绪，跳过UI更新");
         return;
     }
-    
+    console.log("进入updateAuthUI");
     try {
         const isAuthenticated = await nbuAuthClient.isAuthenticated();
         console.log("🎨 更新UI，登录状态:", isAuthenticated);
@@ -323,6 +323,94 @@ window.nbuHandleLogout = nbuHandleLogout;
 if (initializeSupabase()) {
     initializeNBUAuth();
     updateAuthUI();
+}
+
+// 添加SPA导航监听
+function setupSPANavigationListener() {
+    console.log("🔧 设置SPA导航监听器");
+    
+    // 方法1: 监听URL变化（适用于大多数SPA框架）
+    let currentUrl = window.location.href;
+    const observeUrlChange = () => {
+        const newUrl = window.location.href;
+        if (newUrl !== currentUrl) {
+            currentUrl = newUrl;
+            console.log("🔄 URL变化检测到，重新渲染认证组件");
+            setTimeout(updateAuthUI, 100); // 稍等DOM更新
+        }
+    };
+    
+    // 使用MutationObserver监听DOM变化
+    const observer = new MutationObserver(() => {
+        observeUrlChange();
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    // 方法2: 监听pushState和replaceState（处理history API）
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+    
+    history.pushState = function(...args) {
+        originalPushState.apply(this, args);
+        console.log("🔄 pushState检测到，重新渲染认证组件");
+        setTimeout(updateAuthUI, 100);
+    };
+    
+    history.replaceState = function(...args) {
+        originalReplaceState.apply(this, args);
+        console.log("🔄 replaceState检测到，重新渲染认证组件");
+        setTimeout(updateAuthUI, 100);
+    };
+    
+    // 方法3: 监听页面点击事件（备用方案）
+    document.addEventListener('click', (event) => {
+        const link = event.target.closest('a');
+        if (link && link.href && link.href.startsWith(window.location.origin)) {
+            console.log("🔗 内部链接点击，准备重新渲染");
+            // 稍等路由处理完成
+            setTimeout(updateAuthUI, 300);
+        }
+    });
+}
+
+// 修改初始化函数
+async function initializeNBUAuth() {
+    console.log("🚀 开始初始化Auth0客户端");
+    
+    try {
+        // 检查Auth0库是否可用
+        if (typeof auth0 === 'undefined') {
+            console.error('❌ Auth0库未加载');
+            return;
+        }
+        
+        console.log("✅ Auth0库已加载，开始创建客户端实例");
+        
+        // 创建Auth0客户端
+        nbuAuthClient = await auth0.createAuth0Client({
+            domain: "dev-qajzo556g32cbm5b.us.auth0.com",
+            clientId: "MCa52JMm0fAX4uAxRMOW636zkNU1wYN3",
+            authorizationParams: {
+                redirect_uri: "https://nburc.dpdns.org/"
+            },
+            cacheLocation: 'localstorage'
+        });
+
+        console.log("🎉 Auth0客户端初始化成功!");
+        
+        // 处理认证流程
+        await handleAuthentication();
+        
+        // 🆕 设置SPA导航监听
+        setupSPANavigationListener();
+        
+    } catch (error) {
+        console.error("💥 Auth0初始化失败:", error);
+    }
 }
 
 // 论文提交功能
