@@ -156,6 +156,7 @@ async function updateAuthUI() {
             // 用户未登录
             document.getElementById('nbu-login-section').style.display = 'block';
             document.getElementById('nbu-user-section').style.display = 'none';
+            currentUserProfile = null;
             console.log("🔓 显示登录按钮");
         }
         
