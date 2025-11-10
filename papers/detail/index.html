@@ -77,7 +77,7 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="http://example.com/404.html"/>
+    <link rel="canonical" href="http://example.com/papers/detail/"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
@@ -87,8 +87,8 @@
         
         <meta name="description" content="NBU Research center, Veritas et Awesome">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Page Not Found">
-<meta property="og:url" content="http://example.com/404.html">
+<meta property="og:title" content="全文">
+<meta property="og:url" content="http://example.com/papers/detail/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="NBU Research center, Veritas et Awesome">
 <meta property="og:locale" content="en_US">
@@ -107,7 +107,7 @@
     
     <title>
         
-            Page Not Found | NBU Research center
+            全文 | NBU Research center
         
     </title>
 
@@ -388,7 +388,10 @@
 
 
 <body>
-	<div class="progress-bar-container">
+	<!DOCTYPE html>
+<html lang="en">
+<head>
+    <div class="progress-bar-container">
 	
 
 	
@@ -594,15 +597,28 @@ if (typeof window.onContentChange !== 'undefined') {
 			
 
 			<div class="main-content">
-				<div class="nf-container">
-    <div class="nf-text">
-        <h1>404<br>Page Not Found</h1>
-    </div>
-    <div class="nf-button">
-        <a href="/" class="button large center"><i class="fa-regular fa-house"></i> Go Back Home</a>
-    </div>
+				<div class="page-template-container">
+	
+
+	
+
+	<div class="page-template-content markdown-body">
+		
+		<h1>全文</h1>
+		
+
+		
+	</div>
+
+	<div class="page-template-comments">
+		
+	</div>
 </div>
 
+<div class="paginator">
+	
+</div>
+  
 			</div>
 
 			
@@ -731,6 +747,280 @@ if (typeof window.onContentChange !== 'undefined') {
 </main>
 
 
+    <style>
+        .nbu-paper-detail {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .nbu-breadcrumb {
+            margin-bottom: 2rem;
+        }
+
+        .nbu-breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nbu-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .nbu-paper-header {
+            margin-bottom: 3rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 2rem;
+        }
+
+        .nbu-paper-title {
+            font-size: 2rem;
+            margin: 1rem 0;
+            color: var(--text-color);
+            line-height: 1.3;
+        }
+
+        .nbu-paper-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .nbu-paper-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nbu-author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .nbu-paper-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .nbu-paper-abstract-section,
+        .nbu-paper-content-section {
+            margin-bottom: 3rem;
+        }
+
+        .nbu-paper-abstract-section h2,
+        .nbu-paper-content-section h2 {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .nbu-abstract-content {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+            line-height: 1.6;
+        }
+
+        .nbu-paper-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .nbu-paper-content h1,
+        .nbu-paper-content h2,
+        .nbu-paper-content h3 {
+            margin: 2rem 0 1rem 0;
+            color: var(--text-color);
+        }
+
+        .nbu-paper-content p {
+            margin-bottom: 1rem;
+        }
+
+        .nbu-paper-content code {
+            background: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9em;
+        }
+
+        .nbu-paper-content pre {
+            background: var(--code-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .nbu-paper-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .nbu-paper-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nbu-paper-content a:hover {
+            text-decoration: underline;
+        }
+
+        .nbu-paper-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .nbu-back-btn {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .nbu-back-btn:hover {
+            background: var(--bg-muted);
+        }
+
+        @media (max-width: 768px) {
+            .nbu-paper-title {
+                font-size: 1.5rem;
+            }
+            
+            .nbu-paper-meta {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .nbu-paper-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .nbu-paper-footer a {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="paper-detail-container">
+        <div class="nbu-loading">加载论文详情中...</div>
+    </div>
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+
+<script>
+    // 确保Auth0库已加载后再执行
+    if (typeof auth0 !== 'undefined') {
+        // 动态创建脚本元素加载认证逻辑
+        var script = document.createElement('script');
+        script.src = '/js/nburc-auth.js';
+        document.head.appendChild(script);
+    } else {
+        console.warn('Auth0库未加载，跳过认证逻辑初始化');
+    }
+</script>
+<script src="/js/paper-detail.js"></script>
+    <script src="/js/paper-detail.js"></script>
+</body>
+</html>
 	
 <script src="/js/build/tools/imageViewer.js" type="module"></script>
 
