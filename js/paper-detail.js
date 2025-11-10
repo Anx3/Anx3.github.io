@@ -153,7 +153,7 @@ async function loadPaperDetail() {
         `;
         return;
     }
-    
+    console.log("paperId: ", paperId);
     try {
         // 等待认证系统初始化
         if (!supabaseAdmin_d) {
