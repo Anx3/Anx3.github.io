@@ -514,20 +514,26 @@ if (typeof window.onContentChange !== 'undefined') {
                                 <!-- Submenu -->
                                 
                             </li>
-                            <li class="navbar-item">
-                                <a class=""
-                                    <a href="/research/papers/">📚 论文库</a>
-                                </a>
-                            </li>
-                            <li class="navbar-item">
-                                <a class=""
-                                    <a href="/research/submit/">📝 提交论文</a>
-                                </a>
-                            </li>
+                        
+                    
+                    <!-- 添加论文库链接 -->
+                    <li class="navbar-item">
+                        <a href="/research/papers/" class="">
+                            📚 论文库
+                        </a>
+                    </li>
+                    
+                    <!-- 添加提交论文链接 -->
+                    <li class="navbar-item">
+                        <a href="/research/submit/" class="">
+                            📝 提交论文
+                        </a>
+                    </li>
                     
                     
                 </ul>
             </div>
+            
             <!-- Mobile -->
             <div class="mobile">
                 
@@ -563,6 +569,24 @@ if (typeof window.onContentChange !== 'undefined') {
                     </li>
             
 
+            <!-- 移动端论文库链接 -->
+            <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                   href="/research/papers/"
+                >
+                    <span>📚 论文库</span>
+                </a>
+            </li>
+
+            <!-- 移动端提交论文链接 -->
+            <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                   href="/research/submit/"
+                >
+                    <span>📝 提交论文</span>
+                </a>
+            </li>
+
             
             
         </ul>
@@ -584,10 +608,7 @@ if (typeof window.onContentChange !== 'undefined') {
     </div>
 
     <div class="window-mask"></div>
-
 </header>
-
-
 		</div>
 
 		<div class="main-content-body transition-fade-up">
