@@ -3,8 +3,14 @@ const supabaseServiceKey_d = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzd
 const supabaseAdmin_d = supabase.createClient(supabaseUrl_d, supabaseServiceKey_d);
 // 获取URL中的论文ID
 function getPaperIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    let paperId = urlParams.get('id');
+    if(paperId){
+        console.log("paperId: ", paperId);
+        return paperId;
+    }
     const path = window.location.pathname;
-    const match = path.match(/\/research\/papers\/([^\/]+)/);
+    const match = path.match(/\/research\/papers\/detail\/([^\/]+)/);
     return match ? match[1] : null;
 }
 
