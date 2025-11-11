@@ -34,7 +34,7 @@ async function getPaperDetail(paperId) {
                 )
             `)
             .eq('id', paperId)
-            .eq('status', 'published')
+//            .eq('status', 'published')
             .single();
             
         if (error) throw error;
@@ -118,14 +118,16 @@ function renderPaperDetail(paper) {
     renderMarkdownContent(paper.content);
 }
 
-// 渲染Markdown内容（简单版本）
+// 渲染Markdown内容（完整版本）
 function renderMarkdownContent(markdownText) {
     const contentElement = document.getElementById('paper-content');
     if (!contentElement) return;
     
-    // 简单的Markdown解析（你可以后续使用专业的Markdown解析库）
+    // 完整的Markdown解析
     let html = markdownText
         // 标题
+        .replace(/^##### (.*$)/gim, '<h5>$1</h5>')
+        .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
         .replace(/^### (.*$)/gim, '<h3>$1</h3>')
         .replace(/^## (.*$)/gim, '<h2>$1</h2>')
         .replace(/^# (.*$)/gim, '<h1>$1</h1>')
@@ -133,16 +135,57 @@ function renderMarkdownContent(markdownText) {
         .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
         // 斜体
         .replace(/\*(.*?)\*/gim, '<em>$1</em>')
-        // 代码块
-        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+        // 删除线
+        .replace(/~~(.*?)~~/gim, '<del>$1</del>')
+        // 图片 - 这是关键修复！
+        .replace(/!\[(.*?)\]\((.*?)\)/gim, '<div class="nbu-paper-image"><img src="$2" alt="$1" loading="lazy"><div class="nbu-image-caption">$1</div></div>')
+        // 链接
+        .replace(/\[([^\[]+)\]\(([^\)]+)\)/gim, '<a href="$2" target="_blank" rel="noopener">$1</a>')
         // 行内代码
         .replace(/`(.*?)`/g, '<code>$1</code>')
-        // 链接
-        .replace(/\[([^\[]+)\]\(([^\)]+)\)/g, '<a href="$2">$1</a>')
-        // 换行
+        // 代码块
+        .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>')
+        // 引用
+        .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
+        // 水平线
+        .replace(/^\-\-\-$/gim, '<hr>')
+        // 无序列表
+        .replace(/^\s*[\-\*\+] (.*$)/gim, '<ul><li>$1</li></ul>')
+        // 有序列表
+        .replace(/^\s*\d+\. (.*$)/gim, '<ol><li>$1</li></ol>')
+        // 段落和换行
+        .replace(/\n\n/g, '</p><p>')
         .replace(/\n/g, '<br>');
     
+    // 确保有段落包裹
+    if (!html.startsWith('<')) {
+        html = '<p>' + html + '</p>';
+    }
+    
     contentElement.innerHTML = html;
+    
+    // 处理图片加载错误
+    handleImageErrors();
+}
+
+// 处理图片加载错误
+function handleImageErrors() {
+    const images = document.querySelectorAll('.nbu-paper-image img');
+    images.forEach(img => {
+        img.onerror = function() {
+            this.style.display = 'none';
+            const caption = this.parentElement.querySelector('.nbu-image-caption');
+            if (caption) {
+                caption.innerHTML = `❌ 图片加载失败: <a href="${this.src}" target="_blank">${this.alt || '查看原图'}</a>`;
+                caption.style.color = '#ef4444';
+            }
+        };
+        
+        // 添加加载状态
+        img.onload = function() {
+            this.parentElement.classList.add('nbu-image-loaded');
+        };
+    });
 }
 
 // 加载论文详情

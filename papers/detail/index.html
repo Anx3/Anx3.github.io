@@ -948,6 +948,99 @@
                 text-align: center;
             }
         }
+
+        /* 论文图片样式 */
+        .nbu-paper-image {
+            margin: 2rem 0;
+            text-align: center;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--bg-muted);
+            padding: 1rem;
+        }
+
+        .nbu-paper-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .nbu-paper-image img.nbu-image-loaded {
+            opacity: 1;
+        }
+
+        .nbu-paper-image img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .nbu-image-caption {
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* 响应式图片 */
+        @media (max-width: 768px) {
+            .nbu-paper-image {
+                margin: 1.5rem 0;
+                padding: 0.75rem;
+            }
+            
+            .nbu-paper-image img {
+                max-width: 100%;
+            }
+        }
+
+        /* 代码块样式 */
+        .nbu-paper-content pre {
+            background: var(--code-bg, #f6f8fa);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .nbu-paper-content code {
+            background: var(--code-inline-bg, #f1f3f4);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            color: var(--code-color, #e83e8c);
+        }
+
+        .nbu-paper-content pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        /* 链接样式 */
+        .nbu-paper-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .nbu-paper-content a:hover {
+            border-bottom-color: var(--primary-color);
+        }
+
+        /* 引用样式 */
+        .nbu-paper-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            color: var(--text-muted);
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
