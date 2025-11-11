@@ -93,8 +93,8 @@
 <meta property="og:description" content="NBU Research center, Veritas et Awesome">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/redefine-og.webp">
-<meta property="article:published_time" content="2025-11-10T13:36:44.752Z">
-<meta property="article:modified_time" content="2025-11-10T13:36:44.752Z">
+<meta property="article:published_time" content="2025-11-11T18:48:48.484Z">
+<meta property="article:modified_time" content="2025-11-11T18:48:48.484Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/redefine-og.webp">
@@ -626,13 +626,35 @@ if (typeof window.onContentChange !== 'undefined') {
                 <!-- 主题选项将通过JavaScript动态生成 -->
             </div>
         </div>
+        <!-- 新增图片上传区域 -->
+        <div class="nbu-form-group">
+            <label class="nbu-form-label">插入图片</label>
+            <div class="nbu-image-upload-area">
+                <div class="nbu-upload-zone" id="upload-zone">
+                    <div class="nbu-upload-content">
+                        <span class="nbu-upload-icon">📁</span>
+                        <p>点击选择图片或拖拽图片到这里</p>
+                        <small>支持 JPG, PNG, GIF 格式，最大 5MB</small>
+                    </div>
+                    <input type="file" id="image-upload" accept="image/*" multiple style="display: none;">
+                </div>
+                <div class="nbu-uploaded-images" id="uploaded-images"></div>
+            </div>
+        </div>
         <div class="nbu-form-group">
             <label class="nbu-form-label" for="paper-content">论文正文 *</label>
+            <div class="nbu-editor-toolbar">
+                <button type="button" onclick="insertText('**粗体文字**')" title="粗体">B</button>
+                <button type="button" onclick="insertText('*斜体文字*')" title="斜体">I</button>
+                <button type="button" onclick="insertText('[链接文字](URL)')" title="链接">🔗</button>
+                <button type="button" onclick="insertText('`代码`')" title="行内代码">{ }</button>
+                <button type="button" onclick="insertMarkdownImage()" title="插入图片">🖼️</button>
+            </div>
             <textarea id="paper-content" class="nbu-form-textarea" required 
                       placeholder="请使用Markdown格式书写您的论文正文..." rows="15"></textarea>
-            <small style="color: var(--text-muted);">支持Markdown格式，可以使用**粗体**、*斜体*、[链接]()等语法</small>
+            <small style="color: var(--text-muted);">支持Markdown格式，可以使用**粗体**、*斜体*、[链接]()、![图片](URL)等语法</small>
         </div>
-        <button type="submit" class="btn btn-outline-info btn-sm ml-2" id="submit-btn">
+        <button type="submit" class="nbu-submit-btn" id="submit-btn">
             提交论文
         </button>
     </form>
@@ -643,6 +665,9 @@ if (typeof window.onContentChange !== 'undefined') {
 const researchTopics = [
     '计算机科学', '人工智能', '数据科学', '电子电气工程', '机械工程', '土木工程', '化学工程', '航空航天工程','生物医学工程', '工业工程', '材料科学与工程', '应用物理', '软件工程', '经济学', '政治学', '心理学', '犯罪心理学', '社会学', '外交学', '传播学', '新闻学', '国际关系', '种族与民族研究', '法律学', '电影艺术', '美术', '音乐', '戏剧/戏剧艺术', '艺术史', '设计', '摄影', '声乐', '园艺学', '数字艺术', '商业管理', '金融学', '市场营销', '会计学', '人类学', '历史学', '哲学', '英语语言文学', '比较文学', '语言学', '宗教与文化研究', '神秘学', '体育', '环境科学', '动物学', '数学', '理论物理', '化学', '生物学', '生物化学', '细胞与分子生物学', '神经科学', '地质学', '天文学', '统计学', '海洋生物学', '解剖学', '法医学', '口腔医学', '动物医学', '临床心理学'
 ];
+
+// 存储已上传图片的URL
+let uploadedImages = [];
 
 // 初始化主题选择
 function initializeTopics() {
@@ -664,10 +689,163 @@ function initializeTopics() {
     });
 }
 
+// 初始化图片上传功能
+function initializeImageUpload() {
+    const uploadZone = document.getElementById('upload-zone');
+    const fileInput = document.getElementById('image-upload');
+    const uploadedContainer = document.getElementById('uploaded-images');
+    
+    if (!uploadZone || !fileInput) return;
+    
+    // 点击上传区域触发文件选择
+    uploadZone.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    // 拖拽功能
+    uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('nbu-drag-over');
+    });
+    
+    uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('nbu-drag-over');
+    });
+    
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('nbu-drag-over');
+        const files = e.dataTransfer.files;
+        handleImageFiles(files);
+    });
+    
+    // 文件选择变化
+    fileInput.addEventListener('change', (e) => {
+        handleImageFiles(e.target.files);
+    });
+}
+
+// 处理选择的图片文件
+async function handleImageFiles(files) {
+    const uploadedContainer = document.getElementById('uploaded-images');
+    
+    for (let file of files) {
+        // 检查文件类型和大小
+        if (!file.type.startsWith('image/')) {
+            alert('请选择图片文件！');
+            continue;
+        }
+        
+        if (file.size > 5 * 1024 * 1024) {
+            alert('图片大小不能超过5MB！');
+            continue;
+        }
+        
+        // 显示上传中状态
+        const uploadId = 'upload-' + Date.now();
+        uploadedContainer.innerHTML += `
+            <div class="nbu-upload-item" id="${uploadId}">
+                <div class="nbu-upload-info">
+                    <span class="nbu-filename">${file.name}</span>
+                    <span class="nbu-upload-status">上传中...</span>
+                </div>
+            </div>
+        `;
+        
+        try {
+            const imageUrl = await uploadPaperImage(file);
+            uploadedImages.push({
+                name: file.name,
+                url: imageUrl
+            });
+            
+            // 更新上传状态
+            const uploadItem = document.getElementById(uploadId);
+            uploadItem.innerHTML = `
+                <div class="nbu-upload-info">
+                    <span class="nbu-filename">${file.name}</span>
+                    <span class="nbu-upload-status success">✅ 上传成功</span>
+                </div>
+                <div class="nbu-image-preview">
+                    <img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="${imageUrl}"
+                      alt="${file.name}"
+                >
+                    <button type="button" onclick="copyImageMarkdown('${imageUrl}')" class="nbu-copy-btn">
+                        复制Markdown
+                    </button>
+                </div>
+            `;
+            
+        } catch (error) {
+            // 上传失败
+            const uploadItem = document.getElementById(uploadId);
+            uploadItem.innerHTML = `
+                <div class="nbu-upload-info">
+                    <span class="nbu-filename">${file.name}</span>
+                    <span class="nbu-upload-status error">❌ 上传失败</span>
+                </div>
+            `;
+        }
+    }
+}
+
+// 复制图片Markdown代码
+function copyImageMarkdown(imageUrl) {
+    const markdown = `![图片](${imageUrl})`;
+    navigator.clipboard.writeText(markdown).then(() => {
+        alert('Markdown代码已复制到剪贴板！');
+    });
+}
+
+// 插入Markdown文本
+function insertText(text) {
+    const textarea = document.getElementById('paper-content');
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    
+    textarea.value = textarea.value.substring(0, start) + 
+                    text + 
+                    textarea.value.substring(end);
+    
+    // 重新聚焦并设置光标位置
+    textarea.focus();
+    textarea.setSelectionRange(start + text.length, start + text.length);
+}
+
+// 插入图片Markdown
+function insertMarkdownImage() {
+    if (uploadedImages.length === 0) {
+        alert('请先上传图片！');
+        return;
+    }
+    
+    const textarea = document.getElementById('paper-content');
+    const start = textarea.selectionStart;
+    
+    // 如果有多张图片，让用户选择
+    if (uploadedImages.length === 1) {
+        const markdown = `![图片描述](${uploadedImages[0].url})`;
+        textarea.value = textarea.value.substring(0, start) + 
+                        markdown + 
+                        textarea.value.substring(start);
+    } else {
+        // 显示图片选择
+        const imageList = uploadedImages.map((img, index) => 
+            `${index + 1}. ${img.name}`
+        ).join('\n');
+        alert(`请选择图片（复制对应的Markdown代码）：\n\n${imageList}`);
+    }
+    
+    textarea.focus();
+}
+
 // 检查用户登录状态
 function checkLoginStatus() {
-    if (currentUserProfile == null) {
-        // 用户未登录，显示提示
+    if (!currentUserProfile) {
         const form = document.getElementById('paper-submission-form');
         if (form) {
             form.innerHTML = `
@@ -728,9 +906,12 @@ async function handleFormSubmit(event) {
         const result = await submitResearchPaper(paperData);
         
         if (result) {
-            // 清空表单
+            // 清空表单和上传的图片
             document.getElementById('paper-submission-form').reset();
-            // 可以跳转到成功页面或显示成功信息
+            uploadedImages = [];
+            document.getElementById('uploaded-images').innerHTML = '';
+            
+            // 跳转到论文库
             setTimeout(() => {
                 window.location.href = '/research/papers/';
             }, 2000);
@@ -752,6 +933,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', handleFormSubmit);
         initializeTopics();
+        initializeImageUpload();
         
         // 检查登录状态
         setTimeout(() => {
@@ -764,21 +946,127 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <style>
-.nbu-login-required {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: var(--text-muted, #666);
-}
+    .nbu-login-required {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-muted, #666);
+    }
 
-.nbu-login-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
+    .nbu-login-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
 
-.nbu-login-required h3 {
-    margin: 0 0 1rem 0;
-    color: var(--text-color, #333);
-}
+    .nbu-login-required h3 {
+        margin: 0 0 1rem 0;
+        color: var(--text-color, #333);
+    }
+
+    .nbu-image-upload-area {
+        margin-top: 0.5rem;
+    }
+
+    .nbu-upload-zone {
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: var(--bg-muted);
+    }
+
+    .nbu-upload-zone:hover {
+        border-color: var(--primary-color);
+        background: var(--card-bg);
+    }
+
+    .nbu-drag-over {
+        border-color: var(--primary-color);
+        background: var(--primary-light);
+    }
+
+    .nbu-upload-content .nbu-upload-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .nbu-uploaded-images {
+        margin-top: 1rem;
+    }
+
+    .nbu-upload-item {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .nbu-upload-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .nbu-filename {
+        font-weight: 500;
+    }
+
+    .nbu-upload-status.success {
+        color: #10b981;
+    }
+
+    .nbu-upload-status.error {
+        color: #ef4444;
+    }
+
+    .nbu-image-preview {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .nbu-image-preview img {
+        max-width: 100px;
+        max-height: 100px;
+        border-radius: 4px;
+        object-fit: cover;
+    }
+
+    .nbu-copy-btn {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        cursor: pointer;
+    }
+
+    /* 编辑器工具栏 */
+    .nbu-editor-toolbar {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .nbu-editor-toolbar button {
+        background: var(--bg-muted);
+        border: 1px solid var(--border-color);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+
+    .nbu-editor-toolbar button:hover {
+        background: var(--primary-color);
+        color: white;
+    }
 </style>
 	</div>
 

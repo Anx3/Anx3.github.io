@@ -542,3 +542,44 @@ function showSubmissionToast(type, message) {
 window.submitResearchPaper = submitResearchPaper;
 window.getUserPapers = getUserPapers;
 window.getPublishedPapers = getPublishedPapers;
+
+// 图片上传功能
+async function uploadPaperImage(file) {
+    if (!supabaseClient || !currentUserProfile) {
+        throw new Error('请先登录后再上传图片');
+    }
+    
+    try {
+        // 生成唯一文件名
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${currentUserProfile.auth0_user_id}/${Date.now()}.${fileExt}`;
+        
+        console.log('开始上传图片:', fileName);
+        
+        const { data, error } = await supabaseClient
+            .storage
+            .from('research-paper-images')
+            .upload(fileName, file, {
+                cacheControl: '3600',
+                upsert: false
+            });
+            
+        if (error) throw error;
+        
+        // 获取图片公开URL
+        const { data: { publicUrl } } = supabaseClient
+            .storage
+            .from('research-paper-images')
+            .getPublicUrl(fileName);
+            
+        console.log('图片上传成功:', publicUrl);
+        return publicUrl;
+        
+    } catch (error) {
+        console.error('❌ 图片上传失败:', error);
+        throw error;
+    }
+}
+
+// 使函数全局可用
+window.uploadPaperImage = uploadPaperImage;
