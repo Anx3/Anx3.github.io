@@ -1,17 +1,19 @@
 const supabaseUrl_d = "https://grgpsujmjbeuphwvxhpg.supabase.co";
 const supabaseServiceKey_d = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZ3BzdWptamJldXBod3Z4aHBnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTIzNzExNCwiZXhwIjoyMDc0ODEzMTE0fQ.hy4_n74vuailNkPHWkt9YWINfQFsNuwLHNcg7knUlL4";
 const supabaseAdmin_d = supabase.createClient(supabaseUrl_d, supabaseServiceKey_d);
+
 // 获取URL中的论文ID
 function getPaperIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
-    let paperId = urlParams.get('id');
-    if(paperId){
-        console.log("paperId: ", paperId);
+    const paperId = urlParams.get('id');
+    
+    if (paperId) {
+        console.log("从URL参数获取到paperId: ", paperId);
         return paperId;
     }
-    const path = window.location.pathname;
-    const match = path.match(/\/research\/papers\/detail\/([^\/]+)/);
-    return match ? match[1] : null;
+    
+    console.log("未找到paperId参数");
+    return null;
 }
 
 // 获取单篇论文详情
