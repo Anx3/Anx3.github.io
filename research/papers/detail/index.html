@@ -953,7 +953,7 @@
             }
         }
 
-        /* 论文图片样式 */
+        /* 论文图片样式 - 增强版 */
         .nbu-paper-image {
             margin: 2rem 0;
             text-align: center;
@@ -961,6 +961,33 @@
             overflow: hidden;
             background: var(--bg-muted);
             padding: 1rem;
+            position: relative;
+            min-height: 100px; /* 为加载状态预留高度 */
+        }
+
+        .nbu-paper-image::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: nbu-spin 1s linear infinite;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .nbu-paper-image.nbu-image-loaded::before {
+            opacity: 0;
+        }
+
+        @keyframes nbu-spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
         .nbu-paper-image img {
@@ -970,10 +997,17 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .nbu-paper-image.nbu-image-loaded img {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .nbu-paper-image img.nbu-image-loaded {
             opacity: 1;
+            transform: translateY(0);
         }
 
         .nbu-paper-image img:hover {
@@ -986,64 +1020,26 @@
             font-size: 0.9rem;
             color: var(--text-muted);
             font-style: italic;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        /* 响应式图片 */
-        @media (max-width: 768px) {
-            .nbu-paper-image {
-                margin: 1.5rem 0;
-                padding: 0.75rem;
-            }
-            
-            .nbu-paper-image img {
-                max-width: 100%;
-            }
+        .nbu-paper-image.nbu-image-loaded .nbu-image-caption {
+            opacity: 1;
         }
 
-        /* 代码块样式 */
-        .nbu-paper-content pre {
-            background: var(--code-bg, #f6f8fa);
+        /* 图片加载失败样式 */
+        .nbu-image-error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
             padding: 1rem;
             border-radius: 8px;
-            overflow-x: auto;
-            margin: 1rem 0;
-            border-left: 4px solid var(--primary-color);
+            text-align: center;
         }
 
-        .nbu-paper-content code {
-            background: var(--code-inline-bg, #f1f3f4);
-            padding: 0.2rem 0.4rem;
-            border-radius: 4px;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 0.9em;
-            color: var(--code-color, #e83e8c);
-        }
-
-        .nbu-paper-content pre code {
-            background: none;
-            padding: 0;
-            color: inherit;
-        }
-
-        /* 链接样式 */
-        .nbu-paper-content a {
-            color: var(--primary-color);
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-            transition: all 0.2s ease;
-        }
-
-        .nbu-paper-content a:hover {
-            border-bottom-color: var(--primary-color);
-        }
-
-        /* 引用样式 */
-        .nbu-paper-content blockquote {
-            border-left: 4px solid var(--primary-color);
-            padding-left: 1rem;
-            margin: 1.5rem 0;
-            color: var(--text-muted);
-            font-style: italic;
+        .nbu-image-error a {
+            color: #dc2626;
+            text-decoration: underline;
         }
     </style>
 </head>

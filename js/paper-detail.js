@@ -118,10 +118,12 @@ function renderPaperDetail(paper) {
     renderMarkdownContent(paper.content);
 }
 
-// 渲染Markdown内容（完整版本）
+// 渲染Markdown内容（修复图片显示版本）
 function renderMarkdownContent(markdownText) {
     const contentElement = document.getElementById('paper-content');
     if (!contentElement) return;
+    
+    console.log('开始渲染Markdown内容，图片链接:', markdownText.match(/!\[.*?\]\((.*?)\)/g));
     
     // 完整的Markdown解析
     let html = markdownText
@@ -137,8 +139,8 @@ function renderMarkdownContent(markdownText) {
         .replace(/\*(.*?)\*/gim, '<em>$1</em>')
         // 删除线
         .replace(/~~(.*?)~~/gim, '<del>$1</del>')
-        // 图片 - 这是关键修复！
-        .replace(/!\[(.*?)\]\((.*?)\)/gim, '<div class="nbu-paper-image"><img src="$2" alt="$1" loading="lazy"><div class="nbu-image-caption">$1</div></div>')
+        // 图片 - 关键修复：移除loading="lazy"，添加eager加载
+        .replace(/!\[(.*?)\]\((.*?)\)/gim, '<div class="nbu-paper-image"><img src="$2" alt="$1" loading="eager"><div class="nbu-image-caption">$1</div></div>')
         // 链接
         .replace(/\[([^\[]+)\]\(([^\)]+)\)/gim, '<a href="$2" target="_blank" rel="noopener">$1</a>')
         // 行内代码
@@ -163,9 +165,79 @@ function renderMarkdownContent(markdownText) {
     }
     
     contentElement.innerHTML = html;
+    console.log('渲染后的HTML:', contentElement.innerHTML);
     
-    // 处理图片加载错误
-    handleImageErrors();
+    // 强制加载图片
+    forceLoadImages();
+}
+
+// 强制加载所有图片
+function forceLoadImages() {
+    const images = document.querySelectorAll('.nbu-paper-image img');
+    console.log('找到图片数量:', images.length);
+    
+    images.forEach((img, index) => {
+        console.log(`图片 ${index + 1}:`, img.src);
+        
+        // 移除可能的懒加载属性
+        img.removeAttribute('loading');
+        img.removeAttribute('data-src');
+        img.removeAttribute('data-lazy');
+        
+        // 如果src是data-src，则交换
+        if (img.hasAttribute('data-src')) {
+            img.src = img.getAttribute('data-src');
+            img.removeAttribute('data-src');
+        }
+        
+        // 确保图片立即加载
+        img.loading = 'eager';
+        
+        // 添加加载事件监听
+        img.onload = function() {
+            console.log(`图片加载成功: ${this.src}`);
+            this.classList.add('nbu-image-loaded');
+            this.parentElement.classList.add('nbu-image-loaded');
+        };
+        
+        img.onerror = function() {
+            console.error(`图片加载失败: ${this.src}`);
+            this.style.display = 'none';
+            const caption = this.parentElement.querySelector('.nbu-image-caption');
+            if (caption) {
+                caption.innerHTML = `❌ 图片加载失败: <a href="${this.src}" target="_blank">${this.alt || '查看原图'}</a>`;
+                caption.style.color = '#ef4444';
+            }
+        };
+        
+        // 如果图片已经有src，强制重新加载
+        if (img.src && !img.complete) {
+            const originalSrc = img.src;
+            img.src = '';
+            setTimeout(() => {
+                img.src = originalSrc;
+            }, 100);
+        }
+    });
+    
+    // 额外的图片检测
+    setTimeout(() => {
+        checkImageStatus();
+    }, 1000);
+}
+
+// 检查图片状态
+function checkImageStatus() {
+    const images = document.querySelectorAll('.nbu-paper-image img');
+    images.forEach((img, index) => {
+        if (!img.complete) {
+            console.warn(`图片 ${index + 1} 仍未加载完成:`, img.src);
+        } else if (img.naturalWidth === 0) {
+            console.error(`图片 ${index + 1} 加载失败:`, img.src);
+        } else {
+            console.log(`图片 ${index + 1} 加载成功，尺寸: ${img.naturalWidth}x${img.naturalHeight}`);
+        }
+    });
 }
 
 // 处理图片加载错误
