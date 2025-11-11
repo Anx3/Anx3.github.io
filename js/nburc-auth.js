@@ -505,7 +505,7 @@ async function getPublishedPapers() {
                     avatar_url
                 )
             `)
-            .eq('status', 'published')
+//            .eq('status', 'published')
             .order('created_at', { ascending: false });
             
         if (error) throw error;
@@ -543,36 +543,59 @@ window.submitResearchPaper = submitResearchPaper;
 window.getUserPapers = getUserPapers;
 window.getPublishedPapers = getPublishedPapers;
 
-// 图片上传功能
 async function uploadPaperImage(file) {
     if (!supabaseClient || !currentUserProfile) {
         throw new Error('请先登录后再上传图片');
     }
     
     try {
-        // 生成唯一文件名
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${currentUserProfile.auth0_user_id}/${Date.now()}.${fileExt}`;
+        // 验证文件类型
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            throw new Error('不支持的文件格式，请上传 JPG、PNG、GIF 或 WebP 格式的图片');
+        }
         
-        console.log('开始上传图片:', fileName);
+        // 生成安全的文件名
+        const fileExt = file.name.split('.').pop().toLowerCase();
+        const safeUserId = currentUserProfile.auth0_user_id
+            .replace(/\|/g, '_')
+            .replace(/\//g, '_')
+            .replace(/\\/g, '_')
+            .replace(/:/g, '_')
+            .replace(/\*/g, '_')
+            .replace(/\?/g, '_')
+            .replace(/"/g, '_')
+            .replace(/</g, '_')
+            .replace(/>/g, '_')
+            .replace(/\|/g, '_');
+            
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substring(2, 8);
+        const fileName = `img_${safeUserId}_${timestamp}_${random}.${fileExt}`;
         
-        const { data, error } = await supabaseClient
+        console.log('开始上传图片:', fileName, '大小:', (file.size / 1024).toFixed(2) + 'KB');
+        
+        // 上传图片
+        const { data, error } = await supabaseAdmin
             .storage
             .from('research-paper-images')
             .upload(fileName, file, {
-                cacheControl: '3600',
+                cacheControl: '31536000', // 1年缓存
                 upsert: false
             });
             
-        if (error) throw error;
+        if (error) {
+            console.error('Supabase上传错误:', error);
+            throw new Error(`上传失败: ${error.message}`);
+        }
         
         // 获取图片公开URL
-        const { data: { publicUrl } } = supabaseClient
+        const { data: { publicUrl } } = supabaseAdmin
             .storage
             .from('research-paper-images')
             .getPublicUrl(fileName);
             
-        console.log('图片上传成功:', publicUrl);
+        console.log('✅ 图片上传成功:', publicUrl);
         return publicUrl;
         
     } catch (error) {
